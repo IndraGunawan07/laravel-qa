@@ -25,10 +25,15 @@
                                 <div class="col-4"></div>
                                 <div class="col-4"></div>
                                 <div class="col-4">
-                                    @include('shared._author',[
+                                    {{-- call view php --}}
+                                    {{-- @include('shared._author',[
                                         'model' => $question,
                                         'label' => 'asked'
-                                    ])
+                                    ]) --}}
+
+                                    {{--call user info component (vue)  --}}
+                                    {{-- v-bind itu bs ditulis dua cara v-bind: atau : --}}
+                                    <user-info :model="{{ $question }}" label="Asked"></user-info>
                                 </div>
                             </div>
                         </div>
