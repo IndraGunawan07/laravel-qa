@@ -61,7 +61,7 @@ class QuestionController extends Controller
     {
         $question->increment('views'); //equivalent with $question->views = $question->views + 1; $question->save();
 
-        return view('\questions.show', compact('question'));
+        return view('questions.show', compact('question'));
     }
 
     /**
