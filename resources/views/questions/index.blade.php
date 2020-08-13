@@ -50,7 +50,9 @@
                                     <a href="{{ $question->url }}">{{ $question->user->name }}</a>
                                     <small class="text-muted">{{ $question->created_date }}</small>
                                 </p>
-                                {{ Str::of($question->body)->limit(250) }}
+                                <div class="excerpt">
+                                    {{ $question->excerpt(350) }}
+                                </div>
                             </div>
                         </div>
                         <hr>
