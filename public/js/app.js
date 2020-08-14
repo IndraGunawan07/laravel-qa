@@ -11416,7 +11416,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     canAccept: function canAccept() {
-      return true;
+      return this.authorize('accept', this.answer);
     },
     accepted: function accepted() {
       return !this.canAccept && this.isBest;
@@ -11530,9 +11530,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     endpoint: function endpoint() {
       return "/questions/".concat(this.id, "/favorites");
-    },
-    signedIn: function signedIn() {
-      return window.Auth.signedIn;
     }
   },
   methods: {
@@ -59476,9 +59473,12 @@ module.exports = function(module) {
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _authorization_authorize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./authorization/authorize */ "./resources/js/authorization/authorize.js");
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -59488,7 +59488,10 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 __webpack_require__(/*! ./fontawesome */ "./resources/js/fontawesome.js");
 
-window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js"); // import file authorize kita
+
+
+Vue.use(_authorization_authorize__WEBPACK_IMPORTED_MODULE_0__["default"]);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -59512,6 +59515,62 @@ Vue.component('accept', __webpack_require__(/*! ./components/Accept.vue */ "./re
 
 var app = new Vue({
   el: '#app'
+});
+
+/***/ }),
+
+/***/ "./resources/js/authorization/authorize.js":
+/*!*************************************************!*\
+  !*** ./resources/js/authorization/authorize.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _policies__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./policies */ "./resources/js/authorization/policies.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+//import polices.js yang kita buat 
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  install: function install(vue, options) {
+    //define function yang bisa dipanggil kaya template
+    Vue.prototype.authorize = function (policy, model) {
+      //buat cek udh login apa belum
+      if (!window.Auth.signedIn) return false; //method name in the first argument is string sama make sure model nya itu object
+
+      if (typeof policy === 'string' && _typeof(model) === 'object') {
+        //ini kita buat di app.blade.php (layout)
+        var user = window.Auth.user; //authorize('modify', answer)
+
+        return _policies__WEBPACK_IMPORTED_MODULE_0__["default"][policy](user, model); // similar with return policies.modify(user, model);
+      }
+    };
+
+    Vue.prototype.signedIn = window.Auth.signedIn;
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/authorization/policies.js":
+/*!************************************************!*\
+  !*** ./resources/js/authorization/policies.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// buat gantiin policy yg udah dibuat karena kebanyakan hampir sama aja isinya
+/* harmony default export */ __webpack_exports__["default"] = ({
+  modify: function modify(user, model) {
+    return user.id === model.user_id;
+  },
+  accept: function accept(user, answer) {
+    return user.id === answer.question.user_id;
+  }
 });
 
 /***/ }),
