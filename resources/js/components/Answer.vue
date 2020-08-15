@@ -79,9 +79,7 @@ export default {
             if(confirm('Are you sure?')){
                 axios.delete(this.endpoint)
                 .then(res => {
-                    $(this.$el).fadeOut(500, () => {
-                        alert(res.data.message);
-                    })
+                    this.$emit('deleted')
                 });
             }
         }
