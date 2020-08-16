@@ -36,14 +36,17 @@
 <script>
 import Vote from './Vote.vue';
 import UserInfo from './UserInfo.vue';
+import modification from '../mixins/modification';
+
 export default {
     props: ['answer'],
+
+    mixins: [modification],
     
     components: {Vote, UserInfo},
 
     data(){
         return {
-            editing: false,
             body: this.answer.body,
             bodyHtml: this.answer.body_html,
             id: this.answer.id,
@@ -53,39 +56,25 @@ export default {
     },
 
     methods: {
-        edit(){
+        setEditCache(){
             this.beforeEditCache = this.body;
-            this.editing = true;
         },
-        cancel(){
+        restoreFromCache(){
             this.body = this.beforeEditCache;
-            this.editing = false;
-        },
-        // update method
-        // when this method is called, we will send to our server a ajax request using axios library
-        update(){
-            axios.patch(this.endpoint, {
-                body: this.body
-            })
-            .then(res => {
-                // console.log(res);
-                this.editing = false;
-                this.bodyHtml = res.data.body_html;
-                alert(res.data.message);
-            })
-            .catch(err => {
-                alert(err.response.data.message);
-                // console.log("Something went wrong");
-            });
         },
         
-        destroy() {
-            if(confirm('Are you sure?')){
-                axios.delete(this.endpoint)
+        payload(){
+            return {
+                body: this.body
+            };
+        },
+        
+        delete(){
+            axios.delete(this.endpoint)
                 .then(res => {
+                    alert(res.data.message);
                     this.$emit('deleted')
                 });
-            }
         }
     },
 

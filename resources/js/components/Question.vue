@@ -64,9 +64,12 @@
 <script>
 import Vote from './Vote.vue';
 import UserInfo from './UserInfo.vue';
+import modification from '../mixins/modification';
 
 export default {
     props: ['question'],
+
+    mixins: [modification],
 
     components: {Vote, UserInfo},
 
@@ -75,7 +78,6 @@ export default {
             title: this.question.title,
             body: this.question.body,
             bodyHtml: this.question.body_html,
-            editing: false,
             id: this.question.id,
             beforeEditCache: {}
         }
@@ -92,45 +94,33 @@ export default {
     },
 
     methods: {
-        edit(){
+        setEditCache(){
             this.beforeEditCache = {
                 body: this.body,
                 title: this.title
             };
-            this.editing = true;
         },
 
-        cancel(){
+        restoreFromCache(){
             this.body = this.beforeEditCache.body;
             this.title = this.beforeEditCache.title;
-            this.editing = false;
         },
 
-        update(){
-            axios.put(this.endpoint, {
+        payload(){
+            return {
                 body: this.body,
                 title: this.title
-            })
-            .catch(({ response }) => {
-                alert(response.data.message)
-            })
-            .then(({ data }) => {
-                this.bodyHtml = data.body_html;
-                alert(data.message);
-                this.editing = false;
-            })
+            };
         },
 
-        destroy() {
-            if(confirm('Are you sure?')){
-                axios.delete(this.endpoint)
-                .then(({ data }) => {
-                    alert(data.message);
-                });
-                setTimeout(() => {
-                    window.location.href = "/questions";
-                }, 3000);
-            }
+        delete(){
+            axios.delete(this.endpoint)
+            .then(({ data }) => {
+                alert(data.message);
+            });
+            setTimeout(() => {
+                window.location.href = "/questions";
+            }, 3000);
         }
     }
 }

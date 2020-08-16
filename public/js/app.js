@@ -11450,6 +11450,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Vote_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Vote.vue */ "./resources/js/components/Vote.vue");
 /* harmony import */ var _UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UserInfo.vue */ "./resources/js/components/UserInfo.vue");
+/* harmony import */ var _mixins_modification__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../mixins/modification */ "./resources/js/mixins/modification.js");
 //
 //
 //
@@ -11485,17 +11486,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['answer'],
+  mixins: [_mixins_modification__WEBPACK_IMPORTED_MODULE_2__["default"]],
   components: {
     Vote: _Vote_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     UserInfo: _UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   data: function data() {
     return {
-      editing: false,
       body: this.answer.body,
       bodyHtml: this.answer.body_html,
       id: this.answer.id,
@@ -11504,38 +11506,25 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    edit: function edit() {
+    setEditCache: function setEditCache() {
       this.beforeEditCache = this.body;
-      this.editing = true;
     },
-    cancel: function cancel() {
+    restoreFromCache: function restoreFromCache() {
       this.body = this.beforeEditCache;
-      this.editing = false;
     },
-    // update method
-    // when this method is called, we will send to our server a ajax request using axios library
-    update: function update() {
+    payload: function payload() {
+      return {
+        body: this.body
+      };
+    },
+    "delete": function _delete() {
       var _this = this;
 
-      axios.patch(this.endpoint, {
-        body: this.body
-      }).then(function (res) {
-        // console.log(res);
-        _this.editing = false;
-        _this.bodyHtml = res.data.body_html;
+      axios["delete"](this.endpoint).then(function (res) {
         alert(res.data.message);
-      })["catch"](function (err) {
-        alert(err.response.data.message); // console.log("Something went wrong");
-      });
-    },
-    destroy: function destroy() {
-      var _this2 = this;
 
-      if (confirm('Are you sure?')) {
-        axios["delete"](this.endpoint).then(function (res) {
-          _this2.$emit('deleted');
-        });
-      }
+        _this.$emit('deleted');
+      });
     }
   },
   computed: {
@@ -11785,6 +11774,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Vote_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Vote.vue */ "./resources/js/components/Vote.vue");
 /* harmony import */ var _UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UserInfo.vue */ "./resources/js/components/UserInfo.vue");
+/* harmony import */ var _mixins_modification__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../mixins/modification */ "./resources/js/mixins/modification.js");
 //
 //
 //
@@ -11848,10 +11838,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['question'],
+  mixins: [_mixins_modification__WEBPACK_IMPORTED_MODULE_2__["default"]],
   components: {
     Vote: _Vote_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     UserInfo: _UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
@@ -11861,7 +11853,6 @@ __webpack_require__.r(__webpack_exports__);
       title: this.question.title,
       body: this.question.body,
       bodyHtml: this.question.body_html,
-      editing: false,
       id: this.question.id,
       beforeEditCache: {}
     };
@@ -11875,44 +11866,30 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    edit: function edit() {
+    setEditCache: function setEditCache() {
       this.beforeEditCache = {
         body: this.body,
         title: this.title
       };
-      this.editing = true;
     },
-    cancel: function cancel() {
+    restoreFromCache: function restoreFromCache() {
       this.body = this.beforeEditCache.body;
       this.title = this.beforeEditCache.title;
-      this.editing = false;
     },
-    update: function update() {
-      var _this = this;
-
-      axios.put(this.endpoint, {
+    payload: function payload() {
+      return {
         body: this.body,
         title: this.title
-      })["catch"](function (_ref) {
-        var response = _ref.response;
-        alert(response.data.message);
-      }).then(function (_ref2) {
-        var data = _ref2.data;
-        _this.bodyHtml = data.body_html;
-        alert(data.message);
-        _this.editing = false;
-      });
+      };
     },
-    destroy: function destroy() {
-      if (confirm('Are you sure?')) {
-        axios["delete"](this.endpoint).then(function (_ref3) {
-          var data = _ref3.data;
-          alert(data.message);
-        });
-        setTimeout(function () {
-          window.location.href = "/questions";
-        }, 3000);
-      }
+    "delete": function _delete() {
+      axios["delete"](this.endpoint).then(function (_ref) {
+        var data = _ref.data;
+        alert(data.message);
+      });
+      setTimeout(function () {
+        window.location.href = "/questions";
+      }, 3000);
     }
   }
 });
@@ -61296,6 +61273,57 @@ _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_0__["config"].autoRep
 
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_0__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faCaretUp"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faCaretDown"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faStar"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faCheck"]);
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_0__["dom"].watch();
+
+/***/ }),
+
+/***/ "./resources/js/mixins/modification.js":
+/*!*********************************************!*\
+  !*** ./resources/js/mixins/modification.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      editing: false
+    };
+  },
+  methods: {
+    edit: function edit() {
+      this.setEditCache();
+      this.editing = true;
+    },
+    cancel: function cancel() {
+      this.restoreFromCache();
+      this.editing = false;
+    },
+    setEditCache: function setEditCache() {},
+    restoreFromCache: function restoreFromCache() {},
+    update: function update() {
+      var _this = this;
+
+      axios.put(this.endpoint, this.payload())["catch"](function (_ref) {
+        var response = _ref.response;
+        alert(response.data.message);
+      }).then(function (_ref2) {
+        var data = _ref2.data;
+        _this.bodyHtml = data.body_html;
+        alert(data.message);
+        _this.editing = false;
+      });
+    },
+    payload: function payload() {},
+    destroy: function destroy() {
+      if (confirm('Are you sure?')) {
+        this["delete"]();
+      }
+    },
+    "delete": function _delete() {}
+  }
+});
 
 /***/ }),
 
